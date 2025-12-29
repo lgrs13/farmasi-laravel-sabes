@@ -613,9 +613,9 @@ class ResepDokterController extends BaseController
                             'c.stok',
                         )
                         ->Join('gudangbarang as c', function ($join) {
-                            $join->on('a.kode_brng', '=', 'c.kode_brng')
-                                ->On('a.no_batch', '=', 'c.no_batch')
-                                ->On('a.no_faktur', '=', 'c.no_faktur');
+                            $join->on('a.kode_brng', '=', 'c.kode_brng');
+                                // ->On('a.no_batch', '=', 'c.no_batch')
+                                // ->On('a.no_faktur', '=', 'c.no_faktur');
                         })
                         ->where('a.kode_brng', $listitem[$i][1 + $index])
                         ->where('c.kd_bangsal', $request->input('depo'))
@@ -688,8 +688,8 @@ class ResepDokterController extends BaseController
                                 $save = DB::table('gudangbarang as a')
                                     ->where('a.kode_brng', $listitem[$i][(1 + $index)])
                                     ->where('a.kd_bangsal', $request->input('depo'))
-                                    ->where('a.no_batch', $data->no_batch)
-                                    ->where('a.no_faktur', $data->no_faktur)
+                                    // ->where('a.no_batch', $data->no_batch)
+                                    // ->where('a.no_faktur', $data->no_faktur)
                                     ->update([
                                         'stok' => ($hasilkurang <= 0 ? 0 : $hasilkurang)
                                     ]);

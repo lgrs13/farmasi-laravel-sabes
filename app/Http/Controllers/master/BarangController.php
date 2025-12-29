@@ -148,6 +148,8 @@ class BarangController extends BaseController
                 'kode_kategori' => $request->input('kode_kategori'),
                 'kode_golongan' => $request->input('kode_golongan'),
 
+                'sediaan' => $request->input('sediaan'),
+
                 'multidose' => $request->input('multidose'),
                 'dosis' => $request->input('dosis'),
                 'dosis_ml' => $request->input('dosis_ml'),
@@ -212,6 +214,8 @@ class BarangController extends BaseController
                 'kode_kategori' => $request->input('kode_kategori'),
                 'kode_golongan' => $request->input('kode_golongan'),
 
+                'sediaan' => $request->input('sediaan'),
+                
                 'multidose' => $request->input('multidose'),
                 'dosis' => $request->input('dosis'),
                 'dosis_ml' => $request->input('dosis_ml'),

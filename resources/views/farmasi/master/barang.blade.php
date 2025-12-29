@@ -24,8 +24,8 @@
                                 <div class="form-group">
                                     <label for="basicInput">Depo</label>
                                     <select class="form-control form-control-sm" id="depo">
-                                        <option value="GO" selected>Gudang Obat</option>
-                                        <option value="A1">Apotek</option>
+                                        <option value="B0008" selected>Gudang Obat</option>
+                                        <option value="B0009">Apotek</option>
                                         <option value="-">Semua</option>
                                     </select>
                                 </div>
@@ -141,26 +141,33 @@
                             </div>
                         </div>
 
-                        <div class="col-sm-12 col-md-4">
+                        <div class="col-sm-12 col-md-3">
                             <div class="form-group">
                                 <label for="basicInput">Stok Minimal</label>
                                 <input type="number" class="form-control form-control-sm" id="stokminimal">
                             </div>
                         </div>
 
-                        <div class="col-sm-12 col-md-4">
+                        <div class="col-sm-12 col-md-3">
                             <div class="form-group">
                                 <label for="basicInput">Maksimal Beri</label>
                                 <input type="number" class="form-control form-control-sm" value="30" id="maksimalberi">
                             </div>
                         </div>
 
-                        <div class="col-sm-12 col-md-4">
+                        <div class="col-sm-12 col-md-3">
                             <div class="form-group">
                                 <label for="basicInput">Satuan</label>
                                 <select class="form-control satuan" id="satuan">
                                     <option value="-">-</option>
                                 </select>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12 col-md-3">
+                            <div class="form-group">
+                                <label for="basicInput">Sediaan</label>
+                                <input type="number" class="form-control form-control-sm" id="sediaan">
                             </div>
                         </div>
 
@@ -329,26 +336,33 @@
                             </div>
                         </div>
 
-                        <div class="col-sm-12 col-md-4">
+                        <div class="col-sm-12 col-md-3">
                             <div class="form-group">
                                 <label for="basicInput">Stok Minimal</label>
                                 <input type="number" class="form-control form-control-sm" id="stokminimal2">
                             </div>
                         </div>
 
-                        <div class="col-sm-12 col-md-4">
+                        <div class="col-sm-12 col-md-3">
                             <div class="form-group">
                                 <label for="basicInput">Maksimal Beri</label>
                                 <input type="number" class="form-control form-control-sm" value="30" id="maksimalberi2">
                             </div>
                         </div>
 
-                        <div class="col-sm-12 col-md-4">
+                        <div class="col-sm-12 col-md-3">
                             <div class="form-group">
                                 <label for="basicInput">Satuan</label>
                                 <select class="form-control" id="satuan2">
                                     <option value="-">-</option>
                                 </select>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12 col-md-3">
+                            <div class="form-group">
+                                <label for="basicInput">Sediaan</label>
+                                <input type="number" class="form-control form-control-sm" id="sediaan2">
                             </div>
                         </div>
 
@@ -535,7 +549,9 @@
 
                 if (this.value == '1') {
                     $('.secmultidose').show();
+                    $('.secmultidosekonversi').show();
                 } else {
+                    $('.secmultidosekonversi').hide();
                     $('.secmultidose').hide();
                 }
             });
@@ -691,6 +707,7 @@
                                             button += 'data-highalert="' + data.high_alert + '"';
                                             button += 'data-stokminimal="' + data.stokminimal + '"';
                                             button += 'data-batasberi="' + data.batas_beri + '"';
+                                            button += 'data-sediaan="' + data.sediaan + '"';
                                             button += '><i class="bi bi-pencil"></i></button>';
 
                                             if (data.status == 1) {
@@ -754,6 +771,7 @@
             $('#stokminimal2').val($(this).data('stokminimal'));
             $('#maksimalberi2').val($(this).data('batasberi'));
             $('#satuan2').val($(this).data('satuan'));
+            $('#sediaan2').val($(this).data('sediaan'));
             // $('#multidose2').val($(this).data('multidose'));
             console.log($(this).data('dosis'));
 
@@ -933,6 +951,7 @@
                         h_jual: $('#hargajual').val(),
 
                         satuan: $('#satuan').val(),
+                        sediaan: $('#sediaan').val(),
 
                         kenaikan: $('#kenaikan').val(),
                         kdjns: $('#jenis').val(),
@@ -1040,6 +1059,7 @@
                         h_jual: $('#hargajual2').val(),
 
                         satuan: $('#satuan2').val(),
+                        sediaan: $('#sediaan2').val(),
 
                         kenaikan: $('#kenaikan2').val(),
                         kdjns: $('#jenis2').val(),

@@ -282,16 +282,18 @@ class DataController extends BaseController
                     'a.nama_brng',
                     'a.kode_brng',
                     'a.kapasitas',
-                    'a.kode_sat',
+                    // 'a.kode_sat',
+                    'sat.satuan as kode_sat',
                     'a.h_beli',
                     'a.utama',
                     DB::raw('SUM(c.stok) as jml_item'),
 
                 )
                 ->join('gudangbarang as c', 'a.kode_brng', '=', 'c.kode_brng')
+                ->join('kodesatuan as sat', 'a.kode_sat', '=', 'sat.kode_sat')
                 ->where('a.status', '=', '1')
-                ->where('c.no_batch', '<>', '')
-                ->where('c.no_faktur', '<>', '')
+                // ->where('c.no_batch', '<>', '')
+                // ->where('c.no_faktur', '<>', '')
                 ->where('c.kd_bangsal', '=', $request->input('kd_bangsal'))
                 ->where('c.stok', '>', '0')
                 ->groupBy('c.kode_brng')
@@ -303,15 +305,17 @@ class DataController extends BaseController
                     'a.nama_brng',
                     'a.kode_brng',
                     'a.kapasitas',
-                    'a.kode_sat',
+                    // 'a.kode_sat',
+                       'sat.satuan as kode_sat',
                     'a.h_beli',
                     'a.utama',
                     DB::raw('SUM(c.stok) as jml_item'),
                 )
                 ->join('gudangbarang as c', 'a.kode_brng', '=', 'c.kode_brng')
+                ->join('kodesatuan as sat', 'a.kode_sat', '=', 'sat.kode_sat')
                 ->where('a.status', '=', '1')
-                ->where('c.no_batch', '<>', '')
-                ->where('c.no_faktur', '<>', '')
+                // ->where('c.no_batch', '<>', '')
+                // ->where('c.no_faktur', '<>', '')
                 ->where('c.kd_bangsal', '=', $request->input('kd_bangsal'))
                 ->where('c.stok', '>', '0')
                 ->where('a.nama_brng', 'LIKE', '%' . $request->input('searchTerm') . '%')

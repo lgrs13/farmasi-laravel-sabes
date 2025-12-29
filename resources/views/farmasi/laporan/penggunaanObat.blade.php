@@ -129,7 +129,7 @@
                     delay: 250,
                     data: function (params) {
                         return {
-                            kd_bangsal: 'A1',
+                            kd_bangsal: 'B0009',
                             searchTerm: params.term // search term
                         };
                     },

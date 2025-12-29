@@ -203,8 +203,8 @@
                             <div class="form-group">
                                 <label for="basicInput">Lokasi</label>
                                 <select class="form-control form-control-sm" id="lokasi">
-                                    <option value="GO" selected>Gudang Obat</option>
-                                    <option value="A1">Apotek</option>
+                                    <option value="B0008" selected>Gudang Obat</option>
+                                    <option value="B0009">Apotek</option>
                                 </select>
                             </div>
                         </div>

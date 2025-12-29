@@ -19,8 +19,8 @@
                                     <div class="form-group">
                                         <label for="basicInput">Depo</label>
                                         <select class="form-control form-control-sm" id="depo">
-                                            <option value="GO" selected>Gudang Obat</option>
-                                            <option value="A1">Apotek</option>
+                                            <option value="B0008" selected>Gudang Obat</option>
+                                            <option value="B0009">Apotek</option>
                                             <option value="-">Semua</option>
                                         </select>
                                     </div>

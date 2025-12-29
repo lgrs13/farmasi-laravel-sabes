@@ -158,8 +158,8 @@
                             <div class="form-group">
                                 <label for="basicInput">Dari</label>
                                 <select class="form-control" id="dari">
-                                    <option value="GO" selected>Gudang Obat</option>
-                                    <option value="A1">Apotek</option>
+                                    <option value="B0008" selected>Gudang Obat</option>
+                                    <option value="B0009">Apotek</option>
                                 </select>
                             </div>
                         </div>
@@ -167,7 +167,7 @@
                             <div class="form-group">
                                 <label for="basicInput">Tujuan</label>
                                 <select class="form-control" id="tujuan">
-                                    <option value="A1" selected>Apotek</option>
+                                    <option value="B0009" selected>Apotek</option>
                                 </select>
                             </div>
                         </div>

@@ -5,8 +5,15 @@
 @endsection
 
 @section('content')
-    <section class="row">
-        <div class="col-12 col-lg-9">
+    <section class="row" >
+        <div class="col-12">
+            <div class="card"  style="min-height: 600px;">
+                <div class="card-body">
+
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-9" hidden>
             <div class="row">
                 <div class="col-6 col-lg-3 col-md-6">
                     <div class="card">
@@ -200,7 +207,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-12 col-lg-3">
+        <div class="col-12 col-lg-3" hidden>
             <div class="card">
                 <div class="card-body py-4 px-4">
                     <div class="d-flex align-items-center">

@@ -98,7 +98,7 @@
 
         $(document).ready(function(e) {
             $('#retunew').hide()
-            $.ajax({
+            /*$.ajax({
                 url: "/data/getstatusmenu",
                 type: 'GET',
                 dataType: 'json',
@@ -115,7 +115,7 @@
                 error: function(xhr, status, error) {
                     console.log(error);
                 }
-            })
+            })*/
         });
         $.ajaxSetup({
             headers: {

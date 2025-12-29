@@ -34,14 +34,14 @@ class BatchController extends BaseController
                 )
                 ->join('databarang as b', 'a.kode_brng', '=', 'b.kode_brng')
                 ->Join('gudangbarang as c', function ($join) {
-                    $join->on('a.kode_brng', '=', 'c.kode_brng')
-                        ->On('a.no_batch', '=', 'c.no_batch')
-                        ->On('a.no_faktur', '=', 'c.no_faktur');
+                    $join->on('a.kode_brng', '=', 'c.kode_brng');
+                        // ->On('a.no_batch', '=', 'c.no_batch')
+                        // ->On('a.no_faktur', '=', 'c.no_faktur');
                 })
                 ->join('bangsal as d', 'c.kd_bangsal', '=', 'd.kd_bangsal')
                 ->where(function ($query) {
-                    $query->where('c.kd_bangsal', 'A1')
-                        ->orWhere('c.kd_bangsal', 'GO');
+                    $query->where('c.kd_bangsal', 'B0009')
+                        ->orWhere('c.kd_bangsal', 'B0008');
                 })
                 // ->where('c.kd_bangsal', $request->input('kd_bangsal'))
                 ->where('c.stok', '>', 0)
@@ -60,15 +60,11 @@ class BatchController extends BaseController
                 )
                 ->join('databarang as b', 'a.kode_brng', '=', 'b.kode_brng')
                 ->Join('gudangbarang as c', function ($join) {
-                    $join->on('a.kode_brng', '=', 'c.kode_brng')
-                        ->On('a.no_batch', '=', 'c.no_batch')
-                        ->On('a.no_faktur', '=', 'c.no_faktur');
+                    $join->on('a.kode_brng', '=', 'c.kode_brng');
+                        // ->On('a.no_batch', '=', 'c.no_batch')
+                        // ->On('a.no_faktur', '=', 'c.no_faktur');
                 })
                 ->join('bangsal as d', 'c.kd_bangsal', '=', 'd.kd_bangsal')
-                // ->where(function ($query) {
-                //     $query->where('c.kd_bangsal', 'A1')
-                //         ->orWhere('c.kd_bangsal', 'GO');
-                // })
                 ->where('c.kd_bangsal', $request->input('kd_bangsal'))
                 ->where('c.stok', '>', 0)
                 ->get();
@@ -89,14 +85,14 @@ class BatchController extends BaseController
                 )
                 ->join('databarang as b', 'a.kode_brng', '=', 'b.kode_brng')
                 ->Join('gudangbarang as c', function ($join) {
-                    $join->on('a.kode_brng', '=', 'c.kode_brng')
-                        ->On('a.no_batch', '=', 'c.no_batch')
-                        ->On('a.no_faktur', '=', 'c.no_faktur');
+                    $join->on('a.kode_brng', '=', 'c.kode_brng');
+                        // ->On('a.no_batch', '=', 'c.no_batch')
+                        // ->On('a.no_faktur', '=', 'c.no_faktur');
                 })
                 ->join('bangsal as d', 'c.kd_bangsal', '=', 'd.kd_bangsal')
                 ->where(function ($query) {
-                    $query->where('c.kd_bangsal', 'A1')
-                        ->orWhere('c.kd_bangsal', 'GO');
+                    $query->where('c.kd_bangsal', 'B0009')
+                        ->orWhere('c.kd_bangsal', 'B0008');
                 })
                 // ->where('c.kd_bangsal', $request->input('kd_bangsal'))
                 ->where('c.stok', '<=', 0)
@@ -115,9 +111,7 @@ class BatchController extends BaseController
                 )
                 ->join('databarang as b', 'a.kode_brng', '=', 'b.kode_brng')
                 ->Join('gudangbarang as c', function ($join) {
-                    $join->on('a.kode_brng', '=', 'c.kode_brng')
-                        ->On('a.no_batch', '=', 'c.no_batch')
-                        ->On('a.no_faktur', '=', 'c.no_faktur');
+                    $join->on('a.kode_brng', '=', 'c.kode_brng');
                 })
                 ->join('bangsal as d', 'c.kd_bangsal', '=', 'd.kd_bangsal')
                 // ->where(function ($query) {
