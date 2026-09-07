@@ -271,7 +271,7 @@
                 <div class="modal-body">
 
                     <div class="row">
-                        <div class="col-sm-12 col-md-12">
+                        <div class="col-sm-12 col-md-12" hidden>
                             <div class="form-group">
                                 <label for="basicInput">ID</label>
                                 <input type="text" class="form-control form-control-sm" id="idlistobat2" disabled>
@@ -503,7 +503,7 @@
 
                 $('#jumlah2').val($(this).parents("tr").attr('data-jumlah'));
                 $('#lbljumlah2').html($(this).parents("tr").attr('data-satuan'));
-                $('#satuan2').val($(this).parents("tr").attr('data-satuan'));
+                $('#satuan2').val($(this).parents("tr").attr('data-kdsat'));
 
                 $('#jmljual2').val($(this).parents("tr").attr('data-jmljual'));
                 $('#hargajual2').val($(this).parents("tr").attr('data-hjual'));
@@ -647,8 +647,8 @@
                     row += '<td hidden>' + $('#hargajual2').val() + '</td>';
                     row += '<td>' + $('#hargaretur2').val() + '</td>';
                     row += '<td>' + $('#subtotal2').val() + '</td>';
-                    row += '<td>' + $('#nobatch2').val() + '</td>';
-                    row += '<td>' + $('#nofaktur2').val() + '</td>';
+                    row += '<td>' + ($('#nobatch2').val() != null ? $('#nobatch2').val() : '') + '</td>';
+                    row += '<td>' + ($('#nofaktur2').val() != null ? $('#nofaktur2').val() : '') + '</td>';
                     row +=
                         '<td><button class="btn btn-danger btn_delete btn-sm"><i class="bi bi-x-circle-fill"></i></button> </td>';
                     row += '</tr>';
@@ -933,6 +933,7 @@
                                 row += '" data-jumlah="' + response.list_obat[i].jml_retur;
                                 row += '" data-kodebarang="' + response.list_obat[i].kode_brng;
                                 row += '" data-namabrng="' + response.list_obat[i].nama_brng;
+                                row += '" data-kdsat="' + response.list_obat[i].kode_sat;
                                 row += '" data-satuan="' + response.list_obat[i].satuan;
                                 row += '" data-jmljual="' + response.list_obat[i].jml_jual;
                                 row += '" data-hjual="' + response.list_obat[i].h_jual;

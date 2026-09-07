@@ -17,16 +17,12 @@ class AuthCheck
     public function handle(Request $request, Closure $next)
     {
         // dd($request->session());
-        if (!$request->session()->has('user')) {
-            // dd(session('user')['nama_user']) ;  
-            if (!session()->has('url.intended')) {
-                session(['url.intended' => $request->path()]);
-                // dd($request->path());
+        if (!$request->is('data/*') && $request->isMethod('get')) {
+                if (!session()->has('url.intended')) {
+                    session(['url.intended' => $request->path()]);
+                    // dd($request->path());
+                }
             }
-            return redirect('/')->with(
-                ['error' => 'Silakan Login Terlebih Dahulu']
-            );
-        }
         return $next($request);
     }
 }

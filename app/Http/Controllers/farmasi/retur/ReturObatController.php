@@ -57,7 +57,7 @@ class ReturObatController extends BaseController
                 ->select(
                     'c.kode_brng',
                     'b.nama_brng',
-                    'b.kode_sat',
+                    'sat.satuan as kode_sat',
                     'b.utama',
                     'c.biaya_obat',
                     'c.jml',
@@ -68,6 +68,7 @@ class ReturObatController extends BaseController
                         ->On('c.no_batch', '=', 'a.no_batch')
                         ->On('c.no_faktur', '=', 'c.no_faktur');
                 })
+                 ->join('kodesatuan as sat', 'b.kode_sat', '=', 'sat.kode_sat')
                 ->where('c.no_rawat', '=', $request->input('no_rawat'))
                 ->groupBy('a.kode_brng')
                 ->groupBy('c.biaya_obat')
@@ -78,7 +79,7 @@ class ReturObatController extends BaseController
                 ->select(
                     'c.kode_brng',
                     'b.nama_brng',
-                    'b.kode_sat',
+                    'sat.satuan as kode_sat',
                     'b.utama',
                     'c.biaya_obat',
                     'c.jml',
@@ -89,6 +90,7 @@ class ReturObatController extends BaseController
                         ->On('c.no_batch', '=', 'a.no_batch')
                         ->On('c.no_faktur', '=', 'c.no_faktur');
                 })
+                    ->join('kodesatuan as sat', 'b.kode_sat', '=', 'sat.kode_sat')
                 ->where('c.no_rawat', '=', $request->input('no_rawat'))
                 ->where('b.nama_brng', 'LIKE', '%' . $request->input('searchTerm') . '%')
                 ->groupBy('a.kode_brng')
@@ -167,9 +169,12 @@ class ReturObatController extends BaseController
     {
         $resep = DB::table('tampreturjual as a')
             ->select(
-                'a.*'
+                'a.*',
+                'sat.kode_sat',
+                'sat.satuan',
             )
             ->join('databarang as b', 'a.kode_brng', '=', 'b.kode_brng')
+            ->join('kodesatuan as sat', 'b.kode_sat', '=', 'sat.kode_sat')
             ->where('a.no_rawat', $request->input('no_rawat'))
             // ->where('b.no_rawat', $request->input('no_rawat'))
             ->where('b.status', '1')

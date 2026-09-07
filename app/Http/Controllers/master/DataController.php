@@ -389,12 +389,13 @@ class DataController extends BaseController
                 'a.kode_brng',
                 'a.h_beli',
                 'a.utama',
-                'a.kode_sat',
+                'd.satuan as kode_sat',
                 'b.*',
                 'c.nama AS golongan',
             )
             ->join('resep_dokter as b', 'a.kode_brng', '=', 'b.kode_brng')
             ->join('golongan_barang as c', 'a.kode_golongan', '=', 'c.kode')
+            ->join('kodesatuan as d', 'a.kode_sat', '=', 'd.kode_sat')
             // ->join(
             //     DB::raw('SUM(a.stok) as stok, kode_brng  FROM referensi_non_jkn_bpjs_antrian_tasklog GROUP BY no_rawat) f'),
             //     function ($join) {
@@ -451,7 +452,7 @@ class DataController extends BaseController
             ->get();
 
         $arrdataObatRacik = array();
-        if (!$dataobatRacik->isEmpty()) {
+        if (!$dataobatRacik->isEmpty()) { 
             foreach ($dataobatRacik as $dataobatRacik) {
                 $dataDetobatRacik = DB::table('resep_dokter_racikan_detail as a')
                     ->select(
@@ -460,9 +461,10 @@ class DataController extends BaseController
                         'b.utama',
                         'b.h_beli',
                         'b.utama',
-                        'b.kode_sat',
+                        'd.satuan as kode_sat',
                     )
                     ->join('databarang as b', 'a.kode_brng', '=', 'b.kode_brng')
+                     ->join('kodesatuan as d', 'b.kode_sat', '=', 'd.kode_sat')
                     ->where('a.no_resep', '=', $request->input('no_resep'))
                     ->where('a.kd_racik', '=', $dataobatRacik->kd_racik)
                     ->get();
@@ -492,13 +494,14 @@ class DataController extends BaseController
                     'a.kode_brng',
                     'a.h_beli',
                     'a.utama',
-                    'a.kode_sat',
+                    'e.satuan as kode_sat',
                     'b.*',
                     'c.nama AS golongan',
                     'd.*',
                 )
                 ->join('detail_pemberian_obat as b', 'a.kode_brng', '=', 'b.kode_brng')
                 ->join('golongan_barang as c', 'a.kode_golongan', '=', 'c.kode')
+                 ->join('kodesatuan as e', 'a.kode_sat', '=', 'e.kode_sat')
                 ->leftJoin('aturan_pakai as d', function ($join) {
                     $join->on('b.no_rawat', '=', 'd.no_rawat')
                         ->on('b.no_resep', '=', 'd.no_resep')
@@ -517,13 +520,14 @@ class DataController extends BaseController
                     'a.kode_brng',
                     'a.h_beli',
                     'a.utama',
-                    'a.kode_sat',
+                    'sat.satuan as kode_sat',
                     'b.*',
                     'c.nama AS golongan',
                     'd.*',
                 )
                 ->join('detail_pemberian_obat as b', 'a.kode_brng', '=', 'b.kode_brng')
                 ->join('golongan_barang as c', 'a.kode_golongan', '=', 'c.kode')
+                 ->join('kodesatuan as sat', 'a.kode_sat', '=', 'sat.kode_sat')
                 ->leftJoin('aturan_pakai as d', function ($join) {
                     $join->on('b.no_rawat', '=', 'd.no_rawat')
                         ->on('b.no_resep', '=', 'd.no_resep')

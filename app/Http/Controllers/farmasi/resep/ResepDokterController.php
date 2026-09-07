@@ -596,33 +596,55 @@ class ResepDokterController extends BaseController
         $arraybatch = array();
         $save = false;
         $mesagge = '';
-        $listitem = $request->input('list_obat');
         $index = (int) ($request->input('tipe') == 3 ? 1 : 0);
+        $listitem = $request->input('list_obat');
+//         return json_encode(array(
+//         'code' => 200,
+//             'listitem' => $listitem,
+//             'input' => $request->input()
+// ,
+//         ));
         DB::beginTransaction();
         try {
+            
             if ($listitem) {
                 for ($i = 0; $i < count($listitem); $i++) {
-                    $barang = DB::table('data_batch as a')
-                        ->select(
-                            'a.kode_brng',
-                            'a.no_batch',
-                            'a.no_faktur',
-                            'a.tgl_kadaluarsa',
-                            'a.tgl_beli',
-                            'a.utama as harga',
-                            'c.stok',
-                        )
-                        ->Join('gudangbarang as c', function ($join) {
-                            $join->on('a.kode_brng', '=', 'c.kode_brng');
-                                // ->On('a.no_batch', '=', 'c.no_batch')
-                                // ->On('a.no_faktur', '=', 'c.no_faktur');
-                        })
-                        ->where('a.kode_brng', $listitem[$i][1 + $index])
-                        ->where('c.kd_bangsal', $request->input('depo'))
-                        ->orderBy('a.tgl_kadaluarsa')
-                        ->orderBy('a.tgl_beli')
-                        ->where('c.stok', '>', 0)
-                        ->get();
+                    // $barang = DB::table('data_batch as a')
+                    //     ->select(
+                    //         'a.kode_brng',
+                    //         'a.no_batch',
+                    //         'a.no_faktur',
+                    //         'a.tgl_kadaluarsa',
+                    //         'a.tgl_beli',
+                    //         'a.utama as harga',
+                    //         'c.stok',
+                    //     )
+                    //     ->join('gudangbarang as c', 'a.kode_brng', '=', 'c.kode_brng')
+                        
+                    //     ->Join('gudangbarang as c', function ($join) {
+                    //         $join->on('a.kode_brng', '=', 'c.kode_brng');
+                    //             // ->On('a.no_batch', '=', 'c.no_batch')
+                    //             // ->On('a.no_faktur', '=', 'c.no_faktur');
+                    //     })
+
+                    //     ->where('a.kode_brng', $listitem[$i][1 + $index])
+                    //     ->where('c.kd_bangsal', $request->input('depo'))
+                    //     ->orderBy('a.tgl_kadaluarsa')
+                    //     ->orderBy('a.tgl_beli')
+                    //     ->where('c.stok', '>', 0)
+                    //     ->get();
+
+                    $barang = DB::table('gudangbarang as a')
+                                    ->select(
+                                        'a.kode_brng',
+                                        'a.no_batch',
+                                        'a.no_faktur',
+                                        'a.stok',
+                                    )
+                                    ->where('a.kode_brng', $listitem[$i][1 + $index])
+                                    ->where('a.kd_bangsal', $request->input('depo'))
+                                    ->where('a.stok', '>', 0)
+                                    ->get();
 
                     $hasilkurang = 0;
                     $sisa = 0;
@@ -656,8 +678,8 @@ class ResepDokterController extends BaseController
                                 $save = DB::table('gudangbarang as a')
                                     ->where('a.kode_brng', $listitem[$i][1])
                                     ->where('a.kd_bangsal', $request->input('depo'))
-                                    ->where('a.no_batch', $data->no_batch)
-                                    ->where('a.no_faktur', $data->no_faktur)
+                                    // ->where('a.no_batch', $data->no_batch)
+                                    // ->where('a.no_faktur', $data->no_faktur)
                                     ->update([
                                         'stok' => ($hasilkurang <= 0 ? 0 : $hasilkurang)
                                     ]);
@@ -741,9 +763,19 @@ class ResepDokterController extends BaseController
                 }
             }
 
+            // return json_encode(array(
+            //     'code' => 200,
+            //     // 'listitem' => $listitem,
+            //     'input' => $request->input(),
+            // ));
+
             //simpan obat racik
             $arraybatch2 = array();
             $listitemracik = $request->input('list_obat_racik');
+            // return json_encode(array(
+            //     'code' => 200,
+            //     'listitemracik' => $listitemracik,
+            // ));
             if ($listitemracik) {
                 for ($i = 0; $i < count($listitemracik); $i++) {
 
@@ -774,27 +806,40 @@ class ResepDokterController extends BaseController
                                     'kode_brng' => $listitemracik[$i][3],
                                 ]);
 
-                            $barang = DB::table('data_batch as a')
-                                ->select(
-                                    'a.kode_brng',
-                                    'a.no_batch',
-                                    'a.no_faktur',
-                                    'a.tgl_kadaluarsa',
-                                    'a.tgl_beli',
-                                    'a.utama as harga',
-                                    'c.stok',
-                                )
-                                ->Join('gudangbarang as c', function ($join) {
-                                    $join->on('a.kode_brng', '=', 'c.kode_brng')
-                                        ->On('a.no_batch', '=', 'c.no_batch')
-                                        ->On('a.no_faktur', '=', 'c.no_faktur');
-                                })
-                                ->where('a.kode_brng', $listitemracik[$i][3])
-                                ->where('c.kd_bangsal', $request->input('depo'))
-                                ->orderBy('a.tgl_kadaluarsa')
-                                ->orderBy('a.tgl_beli')
-                                ->where('c.stok', '>', 0)
-                                ->get();
+                            // $barang = DB::table('data_batch as a')
+                            //     ->select(
+                            //         'a.kode_brng',
+                            //         'a.no_batch',
+                            //         'a.no_faktur',
+                            //         'a.tgl_kadaluarsa',
+                            //         'a.tgl_beli',
+                            //         'a.utama as harga',
+                            //         'c.stok',
+                            //     )
+                            //     ->join('gudangbarang as c', 'a.kode_brng', '=', 'c.kode_brng')
+                            //     // ->Join('gudangbarang as c', function ($join) {
+                            //     //     $join->on('a.kode_brng', '=', 'c.kode_brng');
+                            //     //         ->On('a.no_batch', '=', 'c.no_batch')
+                            //     //         ->On('a.no_faktur', '=', 'c.no_faktur');
+                            //     // })
+                            //     ->where('a.kode_brng', $listitemracik[$i][3])
+                            //     ->where('c.kd_bangsal', $request->input('depo'))
+                            //     ->orderBy('a.tgl_kadaluarsa')
+                            //     ->orderBy('a.tgl_beli')
+                            //     ->where('c.stok', '>', 0)
+                            //     ->get();
+
+                                $barang = DB::table('gudangbarang as a')
+                                    ->select(
+                                        'a.kode_brng',
+                                        'a.no_batch',
+                                        'a.no_faktur',
+                                        'a.stok',
+                                    )
+                                    ->where('a.kode_brng', $listitemracik[$i][3])
+                                    ->where('a.kd_bangsal', $request->input('depo'))
+                                    ->where('a.stok', '>', 0)
+                                    ->get();
 
                             $hasilkurang = 0;
                             $sisa = 0;
@@ -893,7 +938,7 @@ class ResepDokterController extends BaseController
                                 }
                             } else {
                                 $save = false;
-                                $mesagge = 'stok tidak cukup untuk obat ' . $listitem[$i][2 + $index];
+                                $mesagge = 'stok tidak cukup untuk obat ' . $listitemracik[$i][5];
                                 DB::rollBack();
                                 return response()->json([
                                     'code' => 201,
@@ -906,7 +951,6 @@ class ResepDokterController extends BaseController
             }
 
 
-            if ($save) {
                 if ($request->input('tipe') == 3) {
 
                     DB::table('detail_pemberian_obat_kronis')
@@ -972,68 +1016,68 @@ class ResepDokterController extends BaseController
 
 
 
-                $refrensiJKN = DB::table('referensi_mobilejkn_bpjs as a')
-                    ->where('a.no_rawat', '=', $request->input('no_rawat'))
-                    ->first();
-                if ($refrensiJKN) {
+                // $refrensiJKN = DB::table('referensi_mobilejkn_bpjs as a')
+                //     ->where('a.no_rawat', '=', $request->input('no_rawat'))
+                //     ->first();
+                // if ($refrensiJKN) {
 
-                    $task = DB::table('referensi_mobilejkn_bpjs_antrian_tasklog as a')
-                        ->where('a.no_rawat', '=', $request->input('no_rawat'))
-                        ->where('a.taskid_tipe', '=', '5')
-                        ->first();
-                    if (!$task) {
-                        $dattimeDec = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . '- 20 minute'));
-                        DB::table('referensi_mobilejkn_bpjs_antrian_tasklog')
-                            ->insert([
-                                'no_rawat' => $request->input('no_rawat'),
-                                'taskid_tipe' => '5',
-                                'timestamp_insert' => $dattimeDec
-                            ]);
-                    }
+                //     $task = DB::table('referensi_mobilejkn_bpjs_antrian_tasklog as a')
+                //         ->where('a.no_rawat', '=', $request->input('no_rawat'))
+                //         ->where('a.taskid_tipe', '=', '5')
+                //         ->first();
+                //     if (!$task) {
+                //         $dattimeDec = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . '- 20 minute'));
+                //         DB::table('referensi_mobilejkn_bpjs_antrian_tasklog')
+                //             ->insert([
+                //                 'no_rawat' => $request->input('no_rawat'),
+                //                 'taskid_tipe' => '5',
+                //                 'timestamp_insert' => $dattimeDec
+                //             ]);
+                //     }
 
-                    $task = DB::table('referensi_mobilejkn_bpjs_antrian_tasklog as a')
-                        ->where('a.no_rawat', '=', $request->input('no_rawat'))
-                        ->where('a.taskid_tipe', '=', '6')
-                        ->first();
-                    if (!$task) {
-                        $dattimeDec = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . '- 10 minute'));
-                        DB::table('referensi_mobilejkn_bpjs_antrian_tasklog')
-                            ->insert([
-                                'no_rawat' => $request->input('no_rawat'),
-                                'taskid_tipe' => '6',
-                                // 'timestamp_insert' => $dattimeDec
-                            ]);
-                    }
-                } else {
-                    $task = DB::table('referensi_non_jkn_bpjs_antrian_tasklog as a')
-                        ->where('a.no_rawat', '=', $request->input('no_rawat'))
-                        ->where('a.taskid_tipe', '=', '5')
-                        ->first();
-                    if (!$task) {
-                        $dattimeDec = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . '- 20 minute'));
-                        DB::table('referensi_non_jkn_bpjs_antrian_tasklog')
-                            ->insert([
-                                'no_rawat' => $request->input('no_rawat'),
-                                'taskid_tipe' => '5',
-                                'timestamp_insert' => $dattimeDec
-                            ]);
-                    }
+                //     $task = DB::table('referensi_mobilejkn_bpjs_antrian_tasklog as a')
+                //         ->where('a.no_rawat', '=', $request->input('no_rawat'))
+                //         ->where('a.taskid_tipe', '=', '6')
+                //         ->first();
+                //     if (!$task) {
+                //         $dattimeDec = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . '- 10 minute'));
+                //         DB::table('referensi_mobilejkn_bpjs_antrian_tasklog')
+                //             ->insert([
+                //                 'no_rawat' => $request->input('no_rawat'),
+                //                 'taskid_tipe' => '6',
+                //                 // 'timestamp_insert' => $dattimeDec
+                //             ]);
+                //     }
+                // } else {
+                //     $task = DB::table('referensi_non_jkn_bpjs_antrian_tasklog as a')
+                //         ->where('a.no_rawat', '=', $request->input('no_rawat'))
+                //         ->where('a.taskid_tipe', '=', '5')
+                //         ->first();
+                //     if (!$task) {
+                //         $dattimeDec = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . '- 20 minute'));
+                //         DB::table('referensi_non_jkn_bpjs_antrian_tasklog')
+                //             ->insert([
+                //                 'no_rawat' => $request->input('no_rawat'),
+                //                 'taskid_tipe' => '5',
+                //                 'timestamp_insert' => $dattimeDec
+                //             ]);
+                //     }
 
-                    $task = DB::table('referensi_non_jkn_bpjs_antrian_tasklog as a')
-                        ->where('a.no_rawat', '=', $request->input('no_rawat'))
-                        ->where('a.taskid_tipe', '=', '6')
-                        ->first();
-                    if (!$task) {
-                        $dattimeDec = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . '- 10 minute'));
-                        DB::table('referensi_non_jkn_bpjs_antrian_tasklog')
-                            ->insert([
-                                'no_rawat' => $request->input('no_rawat'),
-                                'taskid_tipe' => '6',
-                                // 'timestamp_insert' => $dattimeDec
-                            ]);
-                    }
-                }
-            }
+                //     $task = DB::table('referensi_non_jkn_bpjs_antrian_tasklog as a')
+                //         ->where('a.no_rawat', '=', $request->input('no_rawat'))
+                //         ->where('a.taskid_tipe', '=', '6')
+                //         ->first();
+                //     if (!$task) {
+                //         $dattimeDec = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . '- 10 minute'));
+                //         DB::table('referensi_non_jkn_bpjs_antrian_tasklog')
+                //             ->insert([
+                //                 'no_rawat' => $request->input('no_rawat'),
+                //                 'taskid_tipe' => '6',
+                //                 // 'timestamp_insert' => $dattimeDec
+                //             ]);
+                //     }
+                // }
+            
 
             DB::commit();
             return response()->json([
@@ -1044,7 +1088,9 @@ class ResepDokterController extends BaseController
             DB::rollBack();
             return response()->json([
                 'code' => 201,
-                'error' => $th,
+                'error' => $th->getMessage(),
+                'message' => 'Terjadi kesalahan pada baris: ' . $th->getLine(),
+                 'input' => $request->input(),
             ]);
         }
     }
@@ -1188,9 +1234,9 @@ class ResepDokterController extends BaseController
     {
         $barang = DB::table('gudangbarang as a')
             ->where('a.kode_brng', $request->input('kode_brng'))
-            ->where('a.no_batch', $request->input('no_batch'))
-            ->where('a.no_faktur', $request->input('no_faktur'))
-            ->where('a.kd_bangsal', 'A1')
+            // ->where('a.no_batch', $request->input('no_batch'))
+            // ->where('a.no_faktur', $request->input('no_faktur'))
+            ->where('a.kd_bangsal', 'B0009')
             ->first();
 
         if ($barang) {
@@ -1206,14 +1252,14 @@ class ResepDokterController extends BaseController
                     'stok_akhir' => ((int) $barang->stok + (int) $request->input('jml')),
 
                     'posisi' => 'Pemberian Obat',
-                    'kd_bangsal' => 'A1',
+                    'kd_bangsal' => 'B0009',
                     'status' => 'Hapus',
 
                     'tanggal' => date('Y-m-d'),
                     'jam' => date('H:i:s'),
                     'petugas' => $request->session()->get('user')['id_user'],
 
-                    'ket' => $request->input('no_rawat') . ' - ' . $request->input('no_resep'),
+                    'keterangan' => $request->input('no_rawat') . ' - ' . $request->input('no_resep'),
                 ]);
         }
 
@@ -1223,15 +1269,15 @@ class ResepDokterController extends BaseController
                 ->where('no_rawat', $request->input('no_rawat'))
                 ->where('no_resep', $request->input('no_resep'))
                 ->where('kode_brng', $request->input('kode_brng'))
-                ->where('no_batch', $request->input('no_batch'))
-                ->where('no_faktur', $request->input('no_faktur'))
+                // ->where('no_batch', $request->input('no_batch'))
+                // ->where('no_faktur', $request->input('no_faktur'))
                 ->delete();
 
             $update = DB::table('gudangbarang')
                 ->where('kode_brng', $request->input('kode_brng'))
-                ->where('no_batch', $request->input('no_batch'))
-                ->where('no_faktur', $request->input('no_faktur'))
-                ->where('kd_bangsal', 'A1')
+                // ->where('no_batch', $request->input('no_batch'))
+                // ->where('no_faktur', $request->input('no_faktur'))
+                ->where('kd_bangsal', 'B0009')
                 ->update([
                     'stok' => ((int) $barang->stok + (int) $request->input('jml'))
                 ]);

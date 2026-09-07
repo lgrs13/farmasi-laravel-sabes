@@ -278,27 +278,47 @@ class InputResepController extends BaseController
         $no_resep = date('Ymd') . sprintf("%05s", ($noresep->no + 1));
         $listitem = $request->input('list_obat');
         for ($i = 0; $i < count($listitem); $i++) {
-            $barang = DB::table('data_batch as a')
+            $barang = DB::table('databarang as a')
                 ->select(
                     'a.kode_brng',
-                    'a.no_batch',
-                    'a.no_faktur',
-                    'a.tgl_kadaluarsa',
-                    'a.tgl_beli',
+                    'c.no_batch',
+                    'c.no_faktur',
+                    // 'a.tgl_kadaluarsa',
+                    // 'a.tgl_beli',
                     'a.utama as harga',
                     'c.stok',
                 )
                 ->Join('gudangbarang as c', function ($join) {
-                    $join->on('a.kode_brng', '=', 'c.kode_brng')
-                        ->On('a.no_batch', '=', 'c.no_batch')
-                        ->On('a.no_faktur', '=', 'c.no_faktur');
+                    $join->on('a.kode_brng', '=', 'c.kode_brng');
+                        // ->On('a.no_batch', '=', 'c.no_batch')
+                        // ->On('a.no_faktur', '=', 'c.no_faktur');
                 })
                 ->where('a.kode_brng', $listitem[$i][1])
                 ->where('c.kd_bangsal', $request->input('depo'))
-                ->orderBy('a.tgl_kadaluarsa')
-                ->orderBy('a.tgl_beli')
                 ->where('c.stok', '>', 0)
                 ->get();
+
+            // $barang = DB::table('data_batch as a')
+            //     ->select(
+            //         'a.kode_brng',
+            //         'a.no_batch',
+            //         'a.no_faktur',
+            //         'a.tgl_kadaluarsa',
+            //         'a.tgl_beli',
+            //         'a.utama as harga',
+            //         'c.stok',
+            //     )
+            //     ->Join('gudangbarang as c', function ($join) {
+            //         $join->on('a.kode_brng', '=', 'c.kode_brng');
+            //             // ->On('a.no_batch', '=', 'c.no_batch')
+            //             // ->On('a.no_faktur', '=', 'c.no_faktur');
+            //     })
+            //     ->where('a.kode_brng', $listitem[$i][1])
+            //     ->where('c.kd_bangsal', $request->input('depo'))
+            //     ->orderBy('a.tgl_kadaluarsa')
+            //     ->orderBy('a.tgl_beli')
+            //     ->where('c.stok', '>', 0)
+            //     ->get();
 
             $hasilkurang = 0;
             $sisa = 0;
@@ -418,11 +438,12 @@ class InputResepController extends BaseController
                     ->select(DB::raw('ifnull(MAX(CONVERT(no_antri,signed)),0) as no'))
                     ->where('tgl_perawatan', '=', $request->input('tanggal'))
                     ->first();
+                    $no_antri = sprintf("%03s", ($no_antri->no + 1));
             }
 
             DB::table('resep_obat')
                 ->insert([
-                    'no_antri' => $no_antri->no ?? " ",
+                    'no_antri' => $no_antri ?? " ",
                     'no_resep' => $no_resep,
                     'tgl_perawatan' => $request->input('tanggal'),
                     'jam' => $request->input('jam'),

@@ -813,7 +813,7 @@
                 <div class="modal-body">
 
                     <div class="row">
-                        <div class="col-sm-12 col-md-12">
+                        <div class="col-sm-12 col-md-12" hidden>
                             <div class="form-group">
                                 <label for="basicInput">ID</label>
                                 <input type="text" class="form-control form-control-sm" id="idlistobat2" disabled>
@@ -3213,13 +3213,15 @@
 
                 var markup = '<tr class="table-warning" id="addobat' + (num + 1) + '"' +
                     ' data-index="addobat' + (num + 1) +
-                    '" data-kd_barang="' + $('#kodebarang1').val() +
+                    '" data-kodebarang="' + $('#kodebarang1').val() +
+                    '" data-namabrng="' + $('#namabarang1').val() +
                     '" data-jumlah="' + $('#jumlah1').val() +
+                    '" data-satuan="' + $('#satuan1').val() +
                     '" data-aturanpakai="' + $('#aturanpakai1').val() +
-                    '" data-caraBeri="' + $('#carapemberian1').val() +
+                    '" data-carapemberian="' + $('#carapemberian1').val() +
                     '" data-dosis="' + $('#dosis1').val() +
                     '" data-frekuensi="' + $('#frekuensi1').val() +
-                    '" data-aturanTambahan="' + $('#aturantambahan1').val() +
+                    '" data-aturantambahan="' + $('#aturantambahan1').val() +
                     '" data-keterangan="' + $('#keterangan1').val() +
                     '">' +
                     '<td>' + $('#jumlah1').val() + '</td>' +
@@ -3243,7 +3245,7 @@
                     '</td>' +
                     '</tr>';
 
-                console.log(markup);
+                // console.log(markup);
 
 
                 $("#tableresep3 tbody").append(markup);
