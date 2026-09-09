@@ -85,7 +85,7 @@
                                         </div>
                                         <div class="col-xl-12 col-md-12">
                                             <div class="btn-group float-end" role="group" aria-label="Basic example">
-                                                <button type="button" class="btn btn-primary" id="btnAdd"><i class="bi bi-plus"></i></button>
+                                                <!-- <button type="button" class="btn btn-primary" id="btnAdd"><i class="bi bi-plus"></i></button> -->
                                                 <button type="button" class="btn btn-warning" id="btnCari"><i class="bi bi-search"></i></button>
                                             </div>
 
