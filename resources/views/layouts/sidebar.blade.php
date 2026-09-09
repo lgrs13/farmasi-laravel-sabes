@@ -259,7 +259,7 @@
                 </li>
                 <li class="sidebar-item" disable>
                     <a href="#" class='sidebar-link text-white'>
-                        <span>RSUD TANAH ABANG</span>
+                        <span>RSUD SAWAH BESAR</span>
                     </a>
                 </li>
                 <li class="sidebar-item" disable>
