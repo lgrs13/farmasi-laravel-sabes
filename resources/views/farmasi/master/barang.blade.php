@@ -25,7 +25,7 @@
                                     <label for="basicInput">Depo</label>
                                     <select class="form-control form-control-sm" id="depo">
                                         <option value="B0008" selected>Gudang Obat</option>
-                                        <option value="B0009">Apotek</option>
+                                        <option value="B0009">Depo Farmasi</option>
                                         <option value="-">Semua</option>
                                     </select>
                                 </div>
