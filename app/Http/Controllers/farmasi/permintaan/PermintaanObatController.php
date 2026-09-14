@@ -147,7 +147,7 @@ class PermintaanObatController extends BaseController
                 // ->where('b.kd_bangsal', '=', 'GO')
                 ->where('b.kd_bangsal', '=', $request->input('dari'))
                 ->where('b.stok', '>', 0)
-                //  ->where('a.status','1')
+                 ->where('a.status','1')
                 ->groupBy('a.kode_brng')
                 ->get();
         }

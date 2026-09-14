@@ -188,7 +188,7 @@
                             <div class="form-group">
                                 <label for="basicInput">Depo</label>
                                 <select class="form-control form-control-sm" id="depo">
-                                    <option value="B0009" selected>Apotek</option>
+                                    <option value="B0009" selected>Depo Farmasi</option>
                                 </select>
                             </div>
                         </div>

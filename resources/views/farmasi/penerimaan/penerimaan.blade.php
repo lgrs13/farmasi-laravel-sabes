@@ -204,7 +204,7 @@
                                 <label for="basicInput">Lokasi</label>
                                 <select class="form-control form-control-sm" id="lokasi">
                                     <option value="B0008" selected>Gudang Obat</option>
-                                    <option value="B0009">Apotek</option>
+                                    <option value="B0009">Depo Farmasi</option>
                                 </select>
                             </div>
                         </div>

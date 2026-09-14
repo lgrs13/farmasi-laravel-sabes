@@ -152,7 +152,7 @@
                         <div class="form-group">
                             <label for="basicInput">Dari</label>
                             <select class="form-control" id="dari">
-                                <option value="B0009" selected>Apotek</option>
+                                <option value="B0009" selected>Depo Farmasi</option>
                             </select>
                         </div>
                     </div>
