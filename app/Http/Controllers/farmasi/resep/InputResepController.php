@@ -271,11 +271,19 @@ class InputResepController extends BaseController
         $arraybatch = array();
         $save = false;
         $mesagge = '';
-        $noresep = DB::table('resep_obat')
-            ->select(DB::raw('ifnull(MAX(CONVERT(RIGHT(no_resep,3),signed)),0) as no'))
-            ->where('tgl_perawatan', '=', date('Y-m-d'))
+
+        $panjang = 5; // jumlah digit nomor urut (sebelumnya 5). Ubah sesuai kebutuhan
+
+        $prefix = date('Ymd') . 'RNP'; // prefix untuk nomor resep (misalnya "RNP" untuk resep rawat inap)
+
+        $no = DB::table('resep_obat')
+            ->select(DB::raw("ifnull(MAX(CONVERT(RIGHT(no_resep, $panjang), signed)), 0) as no"))
+            ->where('tgl_perawatan', '=', $request->input('tgl_peresepan'))
+            ->where('no_resep', 'like', $prefix . '%')
             ->first();
-        $no_resep = date('Ymd') . sprintf("%05s", ($noresep->no + 1));
+
+        $no_resep = $prefix . str_pad($no->no + 1, $panjang, '0', STR_PAD_LEFT);
+
         $listitem = $request->input('list_obat');
         for ($i = 0; $i < count($listitem); $i++) {
             $barang = DB::table('databarang as a')
