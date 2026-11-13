@@ -266,24 +266,235 @@ class InputResepController extends BaseController
         }
     }
 
+    private const PANJANG_NO_RESEP = 6;
+ 
+    /**
+     * Generator no_resep.
+     *   buatNoResep()    -> 20261113000001  (resep biasa)
+     *   buatNoResep('E') -> 20261113E000001 (resep dokter)
+     * Harus dipanggil di dalam transaksi karena memakai lockForUpdate().
+     */
+    private function buatNoResep($huruf = '')
+    {
+        $panjang = self::PANJANG_NO_RESEP;
+        $prefix  = date('Ymd') . $huruf;
+    
+        $query = DB::table('resep_obat')
+            ->selectRaw("IFNULL(MAX(CONVERT(RIGHT(no_resep, $panjang), SIGNED)), 0) as no")
+            ->where('no_resep', 'like', $prefix . '%')
+            ->lockForUpdate();
+    
+        // seri tanpa huruf tidak boleh ikut menghitung nomor berawalan E
+        if ($huruf === '') {
+            $query->where('no_resep', 'not like', '%E%');
+        }
+    
+        $no = $query->first();
+    
+        return $prefix . str_pad($no->no + 1, $panjang, '0', STR_PAD_LEFT);
+    }
+    
     public function postSimpanResep(Request $request)
+    {
+        $arraybatch = [];
+        $listitem   = $request->input('list_obat');
+    
+        DB::beginTransaction();
+        try {
+            if (empty($listitem)) {
+                throw new \RuntimeException('Daftar obat kosong');
+            }
+    
+            $no_resep = $this->buatNoResep();
+    
+            foreach ($listitem as $item) {
+                $kodeBarang = $item[1];
+                $namaBarang = $item[2];
+                $butuh      = (int) $item[0];
+    
+                // ambil semua batch yang masih punya stok, kunci barisnya
+                $barang = DB::table('databarang as a')
+                    ->select(
+                        'a.kode_brng',
+                        'c.no_batch',
+                        'c.no_faktur',
+                        // 'a.tgl_kadaluarsa',
+                        // 'a.tgl_beli',
+                        'a.utama as harga',
+                        'c.stok'
+                    )
+                    ->join('gudangbarang as c', function ($join) {
+                        $join->on('a.kode_brng', '=', 'c.kode_brng');
+                        // ->On('a.no_batch', '=', 'c.no_batch')
+                        // ->On('a.no_faktur', '=', 'c.no_faktur');
+                    })
+                    ->where('a.kode_brng', $kodeBarang)
+                    ->where('c.kd_bangsal', $request->input('depo'))
+                    ->where('c.stok', '>', 0)
+                    ->lockForUpdate()
+                    ->get();
+    
+                // $barang = DB::table('data_batch as a')
+                //     ->select(
+                //         'a.kode_brng',
+                //         'a.no_batch',
+                //         'a.no_faktur',
+                //         'a.tgl_kadaluarsa',
+                //         'a.tgl_beli',
+                //         'a.utama as harga',
+                //         'c.stok',
+                //     )
+                //     ->Join('gudangbarang as c', function ($join) {
+                //         $join->on('a.kode_brng', '=', 'c.kode_brng');
+                //             // ->On('a.no_batch', '=', 'c.no_batch')
+                //             // ->On('a.no_faktur', '=', 'c.no_faktur');
+                //     })
+                //     ->where('a.kode_brng', $listitem[$i][1])
+                //     ->where('c.kd_bangsal', $request->input('depo'))
+                //     ->orderBy('a.tgl_kadaluarsa')
+                //     ->orderBy('a.tgl_beli')
+                //     ->where('c.stok', '>', 0)
+                //     ->get();
+    
+                if ($barang->isEmpty()) {
+                    throw new \RuntimeException('stok tidak cukup untuk obat ' . $namaBarang);
+                }
+    
+                $sisaButuh = $butuh;
+                $index     = 0;
+    
+                foreach ($barang as $data) {
+                    if ($sisaButuh <= 0) {
+                        break;
+                    }
+    
+                    $stok  = (int) $data->stok;
+                    $ambil = min($stok, $sisaButuh);
+    
+                    DB::table('detail_pemberian_obat')->insert([
+                        'tgl_perawatan' => $request->input('tanggal'),
+                        'jam'           => $request->input('jam'),
+                        'no_rawat'      => $request->input('no_rawat'),
+                        'kode_brng'     => $kodeBarang,
+                        'h_beli'        => $item[10],
+                        'biaya_obat'    => $item[11],
+                        'jml'           => $ambil,
+                        'embalase'      => 0,
+                        'tuslah'        => 0,
+                        'total'         => $ambil * (int) $item[11],
+                        'status'        => $request->input('status_rawat'),
+                        'kd_bangsal'    => $request->input('depo'),
+                        'no_batch'      => $data->no_batch,
+                        'no_faktur'     => $data->no_faktur,
+                        'no_resep'      => $no_resep,
+                    ]);
+    
+                    // kurangi stok batch ini
+                    DB::table('gudangbarang')
+                        ->where('kode_brng', $kodeBarang)
+                        ->where('kd_bangsal', $request->input('depo'))
+                        ->where('no_batch', $data->no_batch)
+                        ->where('no_faktur', $data->no_faktur)
+                        ->update(['stok' => $stok - $ambil]);
+    
+                    $hasilkurang = $stok - $sisaButuh; // negatif = masih butuh batch berikutnya
+                    $sisaButuh  -= $ambil;
+    
+                    $arraybatch[] = [
+                        // $listitem[$i][1] =>  $barang,
+                        'hasilkurang' => $hasilkurang,
+                        'sisa'        => $sisaButuh,
+                        'no_batch'    => $data->no_batch,
+                        'no_faktur'   => $data->no_faktur,
+                        'stok'        => $data->stok,
+                        'index'       => ++$index,
+                    ];
+                }
+    
+                // total stok semua batch tetap kurang dari permintaan
+                if ($sisaButuh > 0) {
+                    throw new \RuntimeException('stok tidak cukup untuk obat ' . $namaBarang);
+                }
+    
+                DB::table('aturan_pakai')->insert([
+                    'tgl_perawatan'   => $request->input('tanggal'),
+                    'jam'             => $request->input('jam'),
+                    'no_rawat'        => $request->input('no_rawat'),
+                    'kode_brng'       => $kodeBarang,
+                    'aturan'          => $item[5],
+                    'no_resep'        => $no_resep,
+                    'cara_pemberian'  => $item[6],
+                    'dosis'           => $item[7],
+                    'frekuensi'       => $item[8],
+                    'aturan_tambahan' => $item[9],
+                ]);
+            }
+    
+            // nomor antrian hanya untuk rawat jalan
+            $no_antri = ' ';
+            if ($request->input('status_rawat') == 'Ralan') {
+                $antri = DB::table('resep_obat')
+                    ->selectRaw('IFNULL(MAX(CONVERT(no_antri, SIGNED)), 0) as no')
+                    ->where('tgl_perawatan', '=', $request->input('tanggal'))
+                    ->lockForUpdate()
+                    ->first();
+                $no_antri = sprintf('%03s', ($antri->no + 1));
+            }
+    
+            DB::table('resep_obat')->insert([
+                'no_antri'      => $no_antri,
+                'no_resep'      => $no_resep,
+                'tgl_perawatan' => $request->input('tanggal'),
+                'jam'           => $request->input('jam'),
+                'no_rawat'      => $request->input('no_rawat'),
+                'kd_dokter'     => $request->input('kd_dokter'),
+                'tgl_peresepan' => $request->input('tanggal'),
+                'jam_peresepan' => $request->input('jam'),
+                'status'        => strtolower($request->input('status_rawat')),
+                'stts_resep'    => 'Sedang di Proses',
+            ]);
+    
+            DB::table('data_penyerahan_obat')->upsert([
+                'no_resep'           => $no_resep,
+                'no_rawat'           => $request->input('no_rawat'),
+                'no_rkm_medis'       => $request->input('no_rkm_medis'),
+    
+                // 'perubahan_resep' => $request->input('perubahan_resep'),
+    
+                'status_rawat'       => $request->input('status_rawat'),
+                'user_validasi'      => $request->session()->get('user')['id_user'],
+                'nama_user_validasi' => $request->session()->get('user')['nama_user'],
+                'datetime_validasi'  => date('Y-m-d H:i:s'),
+            ], ['no_rawat']);
+    
+            DB::commit();
+    
+            echo json_encode([
+                'code' => 200,
+                'data' => $arraybatch,
+            ]);
+        } catch (\Throwable $e) {
+            // semua insert dan pengurangan stok dibatalkan otomatis
+            DB::rollBack();
+            \Log::error('postSimpanResep gagal: ' . $e->getMessage());
+    
+            echo json_encode([
+                'code'    => 500,
+                'mesagge' => $e->getMessage(), // ejaan 'mesagge' dipertahankan agar cocok dengan JS
+            ]);
+        }
+    }
+
+    public function postSimpanResepOLD(Request $request)
     {
         $arraybatch = array();
         $save = false;
         $mesagge = '';
-
-        $panjang = 5; // jumlah digit nomor urut (sebelumnya 5). Ubah sesuai kebutuhan
-
-        $prefix = date('Ymd') . 'RNP'; // prefix untuk nomor resep (misalnya "RNP" untuk resep rawat inap)
-
-        $no = DB::table('resep_obat')
-            ->select(DB::raw("ifnull(MAX(CONVERT(RIGHT(no_resep, $panjang), signed)), 0) as no"))
-            ->where('tgl_perawatan', '=', $request->input('tgl_peresepan'))
-            ->where('no_resep', 'like', $prefix . '%')
+        $noresep = DB::table('resep_obat')
+            ->select(DB::raw('ifnull(MAX(CONVERT(RIGHT(no_resep,3),signed)),0) as no'))
+            ->where('tgl_perawatan', '=', date('Y-m-d'))
             ->first();
-
-        $no_resep = $prefix . str_pad($no->no + 1, $panjang, '0', STR_PAD_LEFT);
-
+        $no_resep = date('Ymd') . sprintf("%05s", ($noresep->no + 1));
         $listitem = $request->input('list_obat');
         for ($i = 0; $i < count($listitem); $i++) {
             $barang = DB::table('databarang as a')
