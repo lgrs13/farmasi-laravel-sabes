@@ -266,7 +266,7 @@ class InputResepController extends BaseController
         }
     }
 
-    private const PANJANG_NO_RESEP = 6;
+    private const PANJANG_NO_RESEP = 5;
  
     /**
      * Generator no_resep.
@@ -349,7 +349,7 @@ class InputResepController extends BaseController
                 //             // ->On('a.no_batch', '=', 'c.no_batch')
                 //             // ->On('a.no_faktur', '=', 'c.no_faktur');
                 //     })
-                //     ->where('a.kode_brng', $listitem[$i][1])
+                //     ->where('a.kode_brng', $kodeBarang)
                 //     ->where('c.kd_bangsal', $request->input('depo'))
                 //     ->orderBy('a.tgl_kadaluarsa')
                 //     ->orderBy('a.tgl_beli')
